@@ -3,8 +3,7 @@ import styles from "./styles.module.css";
 import Image from "../Image/Image.jsx";
 
 const NewsBanner = ({ item }) => {
-    console.log(item)
-    return (
+        return (
         <div className={styles.banner}>
             <Image image={item?.image} />
             <h3 className={styles.title}>{item.title}</h3>
