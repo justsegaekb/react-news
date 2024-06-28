@@ -6,6 +6,8 @@ import NewsList from "../../components/NewsList/NewsList.jsx";
 import Skeleton from "../../components/Skeleton/Skeleton.jsx";
 import Pagination from "../../components/Pagination/Pagination.jsx";
 import Categories from "../../components/Categories/Categories.jsx";
+import Search from "../../components/Search/Search.jsx";
+import {useDebounce} from "../../components/helpers/hooks/useDebounce.js";
 
 const Main = () => {
     const
@@ -13,9 +15,11 @@ const Main = () => {
         [isLoading, setIsLoading] = useState(true),
         [categories, setCategories] = useState([]),
         [selectedCategory, setSelectedCategory] = useState('All'),
+        [keywords, setKeywords] = useState(''),
         [currentPage, setCurrentPage] = useState(1),
         totalPages = 10,
-        pageSize = 10;
+        pageSize = 10,
+        debouncedKeyword = useDebounce(keywords, 1500);
 
     const fetchNews = async (currentPage) => {
         try {
@@ -24,6 +28,7 @@ const Main = () => {
                 page_number: currentPage,
                 page_size: pageSize,
                 category: selectedCategory === 'All' ? null : selectedCategory,
+                keywords: debouncedKeyword,
             });
             setNews(response.news);
             setIsLoading(false)
@@ -59,7 +64,7 @@ const Main = () => {
 
     useEffect(() => {
         fetchNews(currentPage);
-    }, [currentPage, selectedCategory])
+    }, [currentPage, selectedCategory, debouncedKeyword])
 
     useEffect(() => {
         fetchCategories()
@@ -68,6 +73,7 @@ const Main = () => {
     return (
         <main className={styles.main}>
             <Categories categories={categories} selectedCategory={selectedCategory} setSelectedCaregory={setSelectedCategory} />
+            <Search keywords={keywords} setKeywords={setKeywords} />
             { news.length > 0 && !isLoading ? <NewsBanner item={news[0]}/> : <Skeleton type={'banner'} count={1} />}
             <Pagination handleNextPage={handleNextPage}
                         totalPages={totalPages}
