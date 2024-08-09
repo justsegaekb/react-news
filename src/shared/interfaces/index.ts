@@ -1,3 +1,5 @@
+import { CategoriesType } from "@/entities/category";
+
 export interface IFilters {
   page_number: number;
   page_size: number;
